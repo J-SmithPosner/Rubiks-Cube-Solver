@@ -391,30 +391,99 @@ Triangulating edges and a face returns indexes of all edges on that face
         A3 = A1+A2
     return [item for item in set(A1+A2+A3) if (A1+A2+A3).count(item) >= 3]
 
-def pieceIndexes(piece):#Takes a square and returns the values of all squares on that piece
-    
+def pieceIndexes(pieceIndex: int) -> list[int]:
+    """
+Finds all squares that are part of a specific piece
+
+Args
+--------
+piece: int
+    One index that lies on the desired piece
+
+Outputs
+--------
+list[int]
+    all indexes of squares that lie on the desired piece
+
+
+    """
+
+
     importantSides = []
     for side in sides:
-        if piece in layers[side]:
+        if pieceIndex in layers[side]:
             importantSides.append(side)
 
     if len(importantSides) == 1:
-        return [piece]
+        return [pieceIndex]
     elif len(importantSides) == 2:
         return triangulate(edges, layers[importantSides[0]], layers[importantSides[1]])
     else:
         return triangulate(layers[importantSides[0]], layers[importantSides[1]], layers[importantSides[2]])
 
-def pieceSolved(piece): #Returns true of the piece of the desired squre is solved and false otherwise
-    return all([x in faces[values(x)] for x in pieceIndexes(piece)]) 
+def pieceSolved(pieceIndex: int) -> bool:
+    """
+Determines whether a piece is in its final position (solved)
+    """
 
-def correctSpot(piece):
-    vals = values(pieceIndexes(piece))
-    return piece in triangulate(layers[vals[0]], layers[vals[1]], layers[vals[2]])
+    return all([x in faces[values(x)] for x in pieceIndexes(pieceIndex)]) 
+
+def correctSpot(pieceIndex: int) -> bool:
+    """
+Determines whether a piece is in the correct spot(not necesarilly solved)
+
+For example, a twisted corner is in the correct spot but not solved
+    """
+
+    vals = values(pieceIndexes(pieceIndex))
+    return pieceIndex in triangulate(layers[vals[0]], layers[vals[1]], layers[vals[2]])
 
 
 
-def DaisyPieceSolve(pieceIndex):#Takes in an index of a white edge and performs the turns to put that piece on the yellow center
+        
+def daisy() -> None: 
+    """
+Performs the required moves to complete the daisy step
+
+Innitial 
+------------------------------------
+`cubeState` requirements
+    None
+
+Final `cubeState` position:
+--------------------------------
+`cubeState` requirements
+    All edges surrounding the yellow center will be white
+
+    """
+
+    global cubeState
+    solved = False
+
+    # while not solved:
+    while (len(set(values(triangulate(edges, faces['D'])))) != 1): 
+        solved = True
+        for i in range(len(cubeState)):
+            if i in edges and i not in faces['D'] and cubeState[i] == 'U':
+                solved = False
+                DaisyPieceSolve(i)
+                break
+
+def DaisyPieceSolve(pieceIndex: int) -> None:
+    """
+Performs the required turns to move a white edge onto the yellow face
+
+Args
+--------
+pieceIndex: int
+    The starting position of the piece that will be moved
+
+Result
+----------
+    The white piece will be on the yellow face without removing any other white pieces on the yellow face    
+    """
+
+
     global cubeState
     if pieceIndex in faces['U']: #if the white piece is on the white face, turn the layer that the piece is on twice. No D moves required because this if statement will be the first one to move white pieces to yellow center
         for side in sides:
@@ -448,21 +517,23 @@ def DaisyPieceSolve(pieceIndex):#Takes in an index of a white edge and performs 
             else:
                 newPieceIndex = pieceIndex - 4
             DaisyPieceSolve(newPieceIndex)
-            
-def daisy(): #Returns moves required to make daisy
-    global cubeState
-    solved = False
+    
+def cross() -> None:
+    """
+Performs the required moves to complete the cross step
 
-    # while not solved:
-    while (len(set(values(triangulate(edges, faces['D'])))) != 1): 
-        solved = True
-        for i in range(len(cubeState)):
-            if i in edges and i not in faces['D'] and cubeState[i] == 'U':
-                solved = False
-                DaisyPieceSolve(i)
-                break
+Innitial 
+------------------------------------
+`cubeState` requirements
+    All white edges are on the yellow face
 
-def cross():
+Final
+--------------------------------
+`cubeState` position
+    All white edges are solved
+    """
+
+
     global cubeState
     for side in sides:
         if side != 'D' and side != 'U':
@@ -471,10 +542,23 @@ def cross():
             
             turn(side+'2')
 
-def solveRemovef2lCorner(piece):
+def solveRemovef2lCorner(pieceIndex: int) -> None:
+    """
+Solves a white corner if it didn't start in the white layer
+
+Otherwise, removes that corner from the white layer
+
+Arg:
+--------
+pieceIndex: int
+    The index in `cubeState` of the piece you want to solve/remove
+
+    
+    """
+
     global cubeState
     importantfaces = []
-    for val in values(pieceIndexes(piece)):
+    for val in values(pieceIndexes(pieceIndex)):
         if val != "U":
             importantfaces.append(val)
 
@@ -483,7 +567,7 @@ def solveRemovef2lCorner(piece):
     
 
     
-    if piece in layers['D']:
+    if pieceIndex in layers['D']:
 
         intermediatePos = triangulate(layers[importantfaces[0]], layers[importantfaces[1]], layers['D'])
         while not ('U' in values(intermediatePos) and importantfaces[0] in values(intermediatePos) and importantfaces[1] in values(intermediatePos)):
@@ -510,13 +594,13 @@ def solveRemovef2lCorner(piece):
 
 
     else:
-        if piece in layers['R']:
+        if pieceIndex in layers['R']:
             sexyStart = 'R'
-            if piece in layers['F']:
+            if pieceIndex in layers['F']:
                 sexyStart += "'"
         else:
             sexyStart = 'L'
-            if piece in layers['B']:
+            if pieceIndex in layers['B']:
                 sexyStart += "'"
 
         if "'" in sexyStart:
@@ -524,28 +608,53 @@ def solveRemovef2lCorner(piece):
         else:
             sexy(sexyStart, 'D')
         
-def firstLayer():
+def firstLayer() -> None:
+    """
+Performs the required moves to solve the first layer
+
+Innitial 
+------------------------------------
+`cubeState` requirements
+    All white edges are solved
+
+Final
+--------------------------------
+`cubeState` position
+    The white layer (`layers['U']`) is solved
+        """
+
+    
     while values(layers['U']) != values(layers['U'], solvedCube):
         for i in range(len(cubeState)):
             if i in corners and values(i) =='U' and (not pieceSolved(i)):
                 solveRemovef2lCorner(i)
 
-def solveF2LEdge(piece):
+def solveF2LEdge(pieceIndex: int) -> None:
+    """
+    Solves one non-yellow edge
 
-    innitialPieceVals = values(pieceIndexes(piece))
-    if pieceIndexes(piece)[0] not in faces['D']:
-        frontColor = values(pieceIndexes(piece))[0]
-        topColor = values(pieceIndexes(piece))[1]
+    Args
+    -------
+    pieceIndex: int
+        The index in `cubeState` of the edge you want to solve
+    """
+
+
+
+    innitialPieceVals = values(pieceIndexes(pieceIndex))
+    if pieceIndexes(pieceIndex)[0] not in faces['D']:
+        frontColor = values(pieceIndexes(pieceIndex))[0]
+        topColor = values(pieceIndexes(pieceIndex))[1]
     else:
-        frontColor = values(pieceIndexes(piece))[1]
-        topColor = values(pieceIndexes(piece))[0]
+        frontColor = values(pieceIndexes(pieceIndex))[1]
+        topColor = values(pieceIndexes(pieceIndex))[0]
 
 
     #These next lines determine how many D turns to do so the edge is ready to be put in its slot
     #First Imagine turning the current edge to the Left face(center value = 13) then turn it to its final destination
     centerOrder = [13, 22, 40, 49]
     finalFaceCenter = faces[frontColor][4]
-    for i in pieceIndexes(piece):
+    for i in pieceIndexes(pieceIndex):
         if i not in faces['D']:
             currentFaceCenter = i-3
 
@@ -570,7 +679,20 @@ def solveF2LEdge(piece):
         sexy(topColor, "D")
         sexy(frontColor + "'", "D'")
                
-def secondLayer():
+def secondLayer() -> None:
+    """
+Performs the required moves to complete the second layer
+
+Innitial 
+------------------------------------
+`cubeState` requirements
+    The white layer (`layers['U']`) is solved
+
+Final
+--------------------------------
+`cubeState` position
+    The white layer (`layers['U']`) and the middle layer (`layers['Middle']`) are solved
+        """
 
     while not values(layers['Middle'])  == values(layers['Middle'], solvedCube): #if an edge on top layer has both non-yellow colors
         if all(['D' in values(pieceIndexes(x)) for x in triangulate(edges, faces['D'])]):
@@ -597,7 +719,21 @@ def secondLayer():
                     if square in layers['D']:
                         solveF2LEdge(square)
 
-def yellowCross():
+def yellowCross() -> None:
+    """
+Performs the required moves to complete yellow cros
+
+Innitial 
+------------------------------------
+`cubeState` requirements
+    The first two layers are solved
+
+Final
+--------------------------------
+`cubeState` position
+    All edges on the yellow face are yellow
+        """
+
     while not len(set(values(triangulate(edges, faces['D'])))) == 1: #While the yellow cross is not solved
         if 'D' in values(triangulate(edges, faces['D'])):
             while not (values(32) == 'D' and values(28) != 'D'):
@@ -606,7 +742,21 @@ def yellowCross():
         sexy('L','D')
         turn("F'")
 
-def orientEdges():
+def orientEdges() -> None:
+    """
+Performs the required moves to solve the yellow edges
+
+Innitial 
+------------------------------------
+`cubeState` requirements
+    The first two layers are solved and all edges on the yellow face are yellow
+
+Final
+--------------------------------
+`cubeState` position
+    All yellow edges are solved
+        """
+
     #Checks if the opposite edges are also opposite colors. If they are, do a sune.
     opposites= values([25,52])
     if ('F' in opposites and 'B' in opposites) or('L' in opposites and 'R' in opposites):
@@ -622,7 +772,20 @@ def orientEdges():
     while(not(values(25) == 'F')):
         turn('D')
                 
-def orientCorners():
+def orientCorners() -> None:
+    """
+Performs the required moves to orient the Corners
+
+Innitial 
+------------------------------------
+`cubeState` requirements
+    The first two layers and all yellow edges are solved
+
+Final
+--------------------------------
+`cubeState` position
+    All yellow corners are in the correct spot (not necessarilly solved)
+        """
 
     while not all([correctSpot(piece) for piece in triangulate(corners, faces['D'])]):
         Dturns = 0
@@ -639,7 +802,23 @@ def orientCorners():
         for i in range(Dturns):
             turn("D'")
 
-def turnCorners():
+def turnCorners() -> None:
+    """
+Solves the Rubiks Cube
+
+Innitial 
+------------------------------------
+`cubeState` requirements
+    The first two layers and all yellow edges are solved. All yellow corners are oriented.
+
+Final
+--------------------------------
+`cubeState` position
+    Solved
+        """
+
+
+
     while not cubeState == solvedCube:
         while not(values(29) == 'D'):
             sexy('R', "U")
@@ -650,7 +829,21 @@ def turnCorners():
 
 
 
-def format(sol):#Set up this function so that the computer can be given a non-spaced string of moves and turn it into nice looking notation
+def format(sol: str) -> str:#Set up this function so that the computer can be given a non-spaced string of moves and turn it into nice looking notation
+    """
+    Makes the solution concise and readable to the User/computer
+
+    Args
+    -------
+    sol: str
+        The unformated solution
+    
+    Output
+    --------
+    str
+        The formatted solution
+    """
+
     #UUU -> U', UU -> U2, U2U -> U', U2L -> U2 L, U'L2 -> U' L2, etc
     sol = sol.split(' ')[0:-1]
 
@@ -697,7 +890,29 @@ def format(sol):#Set up this function so that the computer can be given a non-sp
     return ' '.join(sol)
 
 
-def solve(facelets):
+def solve(facelets: str) -> str:
+    """
+    Performs the moves to solve a Rubik's Cube
+
+    Generally follows this video explanation: https://www.youtube.com/watch?v=7Ron6MN45LY
+
+    Args
+    ---------
+    facelets: str
+        one long string of characters representing the cube
+
+        This follows the conventions set in the `kociemba` library
+    
+    Output
+    -------------
+    str
+        A string of Rubik's Cube moves (or shorthands) to solve the Rubik's Cube
+
+        See this sheet for help understanding moves: https://jperm.net/3x3/moves
+    
+    """
+
+
     global cubeState
     global solution
     cubeState = list(facelets)
