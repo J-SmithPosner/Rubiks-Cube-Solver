@@ -697,14 +697,14 @@ Final
     while not values(layers['Middle'])  == values(layers['Middle'], solvedCube): #if an edge on top layer has both non-yellow colors
         if all(['D' in values(pieceIndexes(x)) for x in triangulate(edges, faces['D'])]):
             for square in triangulate(layers['Middle'], edges):
-                if not ('D' in values(pieceIndexes(square))):
+                if not pieceSolved(square):
                     if square in layers['R']:
                         if square in layers['F']:
                             sexy("R'", "D'")
                             sexy("F", "D")
                         else:
                             sexy("R","D")
-                            sexy("F'", "D'")
+                            sexy("B'", "D'")
                     else:
                         if square in layers["F"]:
                             sexy("L", "D")
@@ -712,6 +712,7 @@ Final
                         else:
                             sexy("L'", "D'")
                             sexy("F", "D")
+                    break
                    
         else:
             for square in triangulate(layers['D'], edges):
@@ -786,7 +787,8 @@ Final
 `cubeState` position
     All yellow corners are in the correct spot (not necessarilly solved)
         """
-
+    print(format(solution))
+    displayCube()
     while not all([correctSpot(piece) for piece in triangulate(corners, faces['D'])]):
         Dturns = 0
         if correctSpot(26):
@@ -798,7 +800,9 @@ Final
 
         for i in range(Dturns):
             turn('D')
+
         algorithm("D L D' R' D L' D' R")
+        
         for i in range(Dturns):
             turn("D'")
 
@@ -829,19 +833,19 @@ Final
 
 
 
-def format(sol: str) -> str:#Set up this function so that the computer can be given a non-spaced string of moves and turn it into nice looking notation
+def reduceSolution(sol: str) -> str:#Set up this function so that the computer can be given a non-spaced string of moves and turn it into nice looking notation
     """
-    Makes the solution concise and readable to the User/computer
+    Removes any unnecessary moves from solution
 
     Args
     -------
     sol: str
-        The unformated solution
+        The messy solution
     
     Output
     --------
     str
-        The formatted solution
+        The clean and concise solution
     """
 
     #UUU -> U', UU -> U2, U2U -> U', U2L -> U2 L, U'L2 -> U' L2, etc
@@ -889,6 +893,8 @@ def format(sol: str) -> str:#Set up this function so that the computer can be gi
             
     return ' '.join(sol)
 
+def format(sol: str) -> str:
+    return reduceSolution(sol)
 
 def solve(facelets: str) -> str:
     """
@@ -929,6 +935,7 @@ def solve(facelets: str) -> str:
 
     secondLayer()
     solution += '\n'
+    
 
     yellowCross()
     solution += '\n'
@@ -957,4 +964,5 @@ def solve(facelets: str) -> str:
 
 # D S(R,U)x4 D S(R,U)x4 D S(R,U)x4 D
 
-print(solve(scramble("F' U2 R B2 L' D F2 R' U B' L2 D2 F' R2 U' L B2 D' R U2")))
+
+print(solve(scramble("R' B' U' R' B' D2 R D2 F U2 R2 L2 F' D2 B' R2 U2 R2 F' U' R")))
