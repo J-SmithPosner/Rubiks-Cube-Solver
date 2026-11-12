@@ -12,7 +12,7 @@ solution = ''
 sides = ['U', 'D', 'R', 'F', 'L', 'B']
 edges = [1,3,5,7,10,12,14,16,19,21,23,25,28,30,32,34,37,39,41,43,46,48,50,52]
 corners = [0,2,6,8,9,11,15,17,18,20,24,26,27,29,33,35,36,38,42,44,45,47,51,53]
-centers = [4,13,22,31,40,49]
+centers = [4,13,22,31,40,49] 
 
 
 faces = {
@@ -35,6 +35,8 @@ layers = {
     'Middle': [39,40,41,21,22,23,12,13,14,48,49,50]
 }
 
+#This gets used later. It eliminates an issue when trying to format the Orient Edges step
+OrientEdgesOrientationColors = ['','']
 
 def turn (rot: str, addSol: bool = True) -> None:
     """
@@ -81,139 +83,97 @@ if `addSol` is True, `rot` will be added to the global variable `solution
 
     for i in range(numRots):
 
-        if rot[0] == 'M':
-            newCubeState[19] = cubeState[1]
-            newCubeState[22] = cubeState[4]
-            newCubeState[25] = cubeState[7]
-            newCubeState[28] = cubeState[19]
-            newCubeState[31] = cubeState[22]
-            newCubeState[34] = cubeState[25]
-            newCubeState[52] = cubeState[28]
-            newCubeState[49] = cubeState[31]
-            newCubeState[46] = cubeState[34]
-            newCubeState[1] = cubeState[52]
-            newCubeState[4] = cubeState[49]
-            newCubeState[7] = cubeState[46]
-        elif rot[0] == 'S':
-            newCubeState[10] = cubeState[3]
-            newCubeState[13] = cubeState[4]
-            newCubeState[16] = cubeState[5]
-            newCubeState[3] = cubeState[43]
-            newCubeState[4] = cubeState[40]
-            newCubeState[5] = cubeState[37]
-            newCubeState[43] = cubeState[32]
-            newCubeState[40] = cubeState[31]
-            newCubeState[37] = cubeState[30]
-            newCubeState[32] = cubeState[10]
-            newCubeState[31] = cubeState[13]
-            newCubeState[30] = cubeState[16]
-        elif rot[0] == 'E':
-            newCubeState[21] = cubeState[39]
-            newCubeState[22] = cubeState[40]
-            newCubeState[23] = cubeState[41]
-            newCubeState[12] = cubeState[21]
-            newCubeState[13] = cubeState[22]
-            newCubeState[14] = cubeState[23]
-            newCubeState[48] = cubeState[12]
-            newCubeState[49] = cubeState[13]
-            newCubeState[50] = cubeState[14]
-            newCubeState[39] = cubeState[48]
-            newCubeState[40] = cubeState[49]
-            newCubeState[41] = cubeState[50]            
+        #The following statements rotate each piece on the face being turned clockwise
+        faceAdder = ['U','R','F','D','L','B'].index(rot[0])*9  
+        newCubeState[0+faceAdder] = cubeState[6+faceAdder]    
+        newCubeState[1+faceAdder] = cubeState[3+faceAdder]
+        newCubeState[2+faceAdder] = cubeState[0+faceAdder]
+        newCubeState[3+faceAdder] = cubeState[7+faceAdder]    
+        newCubeState[5+faceAdder] = cubeState[1+faceAdder]
+        newCubeState[6+faceAdder] = cubeState[8+faceAdder]    
+        newCubeState[7+faceAdder] = cubeState[5+faceAdder]
+        newCubeState[8+faceAdder] = cubeState[2+faceAdder]
 
-        else:
+        #The following if Statements turn the pieces on the non-rotated face 90 degrees clockwise around the cube
+        if rot[0] == 'U':
+            newCubeState[9] = cubeState[45]
+            newCubeState[10] = cubeState[46]
+            newCubeState[11] = cubeState[47]
+            newCubeState[18] = cubeState[9]
+            newCubeState[19] = cubeState[10]
+            newCubeState[20] = cubeState[11]
+            newCubeState[36] = cubeState[18]
+            newCubeState[37] = cubeState[19]
+            newCubeState[38] = cubeState[20]
+            newCubeState[45] = cubeState[36]
+            newCubeState[46] = cubeState[37]
+            newCubeState[47] = cubeState[38]
 
-            #The following statements rotate each piece on the face being turned clockwise
-            faceAdder = ['U','R','F','D','L','B'].index(rot[0])*9  
-            newCubeState[0+faceAdder] = cubeState[6+faceAdder]    
-            newCubeState[1+faceAdder] = cubeState[3+faceAdder]
-            newCubeState[2+faceAdder] = cubeState[0+faceAdder]
-            newCubeState[3+faceAdder] = cubeState[7+faceAdder]    
-            newCubeState[5+faceAdder] = cubeState[1+faceAdder]
-            newCubeState[6+faceAdder] = cubeState[8+faceAdder]    
-            newCubeState[7+faceAdder] = cubeState[5+faceAdder]
-            newCubeState[8+faceAdder] = cubeState[2+faceAdder]
-
-            #The following if Statements turn the pieces on the non-rotated face 90 degrees clockwise around the cube
-            if rot[0] == 'U':
-                newCubeState[9] = cubeState[45]
-                newCubeState[10] = cubeState[46]
-                newCubeState[11] = cubeState[47]
-                newCubeState[18] = cubeState[9]
-                newCubeState[19] = cubeState[10]
-                newCubeState[20] = cubeState[11]
-                newCubeState[36] = cubeState[18]
-                newCubeState[37] = cubeState[19]
-                newCubeState[38] = cubeState[20]
-                newCubeState[45] = cubeState[36]
-                newCubeState[46] = cubeState[37]
-                newCubeState[47] = cubeState[38]
-
-            elif rot[0] == 'D':
-                newCubeState[15] = cubeState[24]
-                newCubeState[16] = cubeState[25]
-                newCubeState[17] = cubeState[26]
-                newCubeState[24] = cubeState[42]
-                newCubeState[25] = cubeState[43]
-                newCubeState[26] = cubeState[44]
-                newCubeState[42] = cubeState[51]
-                newCubeState[43] = cubeState[52]
-                newCubeState[44] = cubeState[53]
-                newCubeState[51] = cubeState[15]
-                newCubeState[52] = cubeState[16]
-                newCubeState[53] = cubeState[17]
-            elif rot[0] == 'R':
-                newCubeState[2] = cubeState[20]
-                newCubeState[5] = cubeState[23]
-                newCubeState[8] = cubeState[26]
-                newCubeState[20] = cubeState[29]
-                newCubeState[23] = cubeState[32]
-                newCubeState[26] = cubeState[35]
-                newCubeState[29] = cubeState[51]
-                newCubeState[32] = cubeState[48]
-                newCubeState[35] = cubeState[45]
-                newCubeState[51] = cubeState[2]
-                newCubeState[48] = cubeState[5]
-                newCubeState[45] = cubeState[8]
-            elif rot[0] == 'L':
-                newCubeState[0] = cubeState[53]
-                newCubeState[3] = cubeState[50]
-                newCubeState[6] = cubeState[47]
-                newCubeState[18] = cubeState[0]
-                newCubeState[21] = cubeState[3]
-                newCubeState[24] = cubeState[6]
-                newCubeState[27] = cubeState[18]
-                newCubeState[30] = cubeState[21]
-                newCubeState[33] = cubeState[24]
-                newCubeState[53] = cubeState[27]
-                newCubeState[50] = cubeState[30]
-                newCubeState[47] = cubeState[33]
-            elif rot[0] == 'F':
-                newCubeState[6] = cubeState[44]
-                newCubeState[7] = cubeState[41]
-                newCubeState[8] = cubeState[38]
-                newCubeState[44] = cubeState[29]
-                newCubeState[41] = cubeState[28]
-                newCubeState[38] = cubeState[27]
-                newCubeState[29] = cubeState[9]
-                newCubeState[28] = cubeState[12]
-                newCubeState[27] = cubeState[15]
-                newCubeState[9] = cubeState[6]
-                newCubeState[12] = cubeState[7]
-                newCubeState[15] = cubeState[8]
-            elif rot[0] == 'B':
-                newCubeState[0] = cubeState[11]
-                newCubeState[1] = cubeState[14]
-                newCubeState[2] = cubeState[17]
-                newCubeState[42] = cubeState[0]
-                newCubeState[39] = cubeState[1]
-                newCubeState[36] = cubeState[2]
-                newCubeState[35] = cubeState[42]
-                newCubeState[34] = cubeState[39]
-                newCubeState[33] = cubeState[36]
-                newCubeState[11] = cubeState[35]
-                newCubeState[14] = cubeState[34]
-                newCubeState[17] = cubeState[33]
+        elif rot[0] == 'D':
+            newCubeState[15] = cubeState[24]
+            newCubeState[16] = cubeState[25]
+            newCubeState[17] = cubeState[26]
+            newCubeState[24] = cubeState[42]
+            newCubeState[25] = cubeState[43]
+            newCubeState[26] = cubeState[44]
+            newCubeState[42] = cubeState[51]
+            newCubeState[43] = cubeState[52]
+            newCubeState[44] = cubeState[53]
+            newCubeState[51] = cubeState[15]
+            newCubeState[52] = cubeState[16]
+            newCubeState[53] = cubeState[17]
+        elif rot[0] == 'R':
+            newCubeState[2] = cubeState[20]
+            newCubeState[5] = cubeState[23]
+            newCubeState[8] = cubeState[26]
+            newCubeState[20] = cubeState[29]
+            newCubeState[23] = cubeState[32]
+            newCubeState[26] = cubeState[35]
+            newCubeState[29] = cubeState[51]
+            newCubeState[32] = cubeState[48]
+            newCubeState[35] = cubeState[45]
+            newCubeState[51] = cubeState[2]
+            newCubeState[48] = cubeState[5]
+            newCubeState[45] = cubeState[8]
+        elif rot[0] == 'L':
+            newCubeState[0] = cubeState[53]
+            newCubeState[3] = cubeState[50]
+            newCubeState[6] = cubeState[47]
+            newCubeState[18] = cubeState[0]
+            newCubeState[21] = cubeState[3]
+            newCubeState[24] = cubeState[6]
+            newCubeState[27] = cubeState[18]
+            newCubeState[30] = cubeState[21]
+            newCubeState[33] = cubeState[24]
+            newCubeState[53] = cubeState[27]
+            newCubeState[50] = cubeState[30]
+            newCubeState[47] = cubeState[33]
+        elif rot[0] == 'F':
+            newCubeState[6] = cubeState[44]
+            newCubeState[7] = cubeState[41]
+            newCubeState[8] = cubeState[38]
+            newCubeState[44] = cubeState[29]
+            newCubeState[41] = cubeState[28]
+            newCubeState[38] = cubeState[27]
+            newCubeState[29] = cubeState[9]
+            newCubeState[28] = cubeState[12]
+            newCubeState[27] = cubeState[15]
+            newCubeState[9] = cubeState[6]
+            newCubeState[12] = cubeState[7]
+            newCubeState[15] = cubeState[8]
+        elif rot[0] == 'B':
+            newCubeState[0] = cubeState[11]
+            newCubeState[1] = cubeState[14]
+            newCubeState[2] = cubeState[17]
+            newCubeState[42] = cubeState[0]
+            newCubeState[39] = cubeState[1]
+            newCubeState[36] = cubeState[2]
+            newCubeState[35] = cubeState[42]
+            newCubeState[34] = cubeState[39]
+            newCubeState[33] = cubeState[36]
+            newCubeState[11] = cubeState[35]
+            newCubeState[14] = cubeState[34]
+            newCubeState[17] = cubeState[33]
 
         cubeState = newCubeState.copy()
    
@@ -272,12 +232,17 @@ addSol: `bool`, optional
 Side Effect
 -----------
 `cubeState` is modified by running `turn()` for each turn in `alg` 
+
+In `solution` All turns done in an algorithm are surrounded by ()
     """
 
-
+    global solution
+    solution +='('
     alg = alg.split(' ')
     for letter in alg:
         turn(letter, addSol)
+
+    solution = solution[0:-1] + ')' + ' '
 
 def scramble(moves: str)-> str:
     """
@@ -739,9 +704,8 @@ Final
         if 'D' in values(triangulate(edges, faces['D'])):
             while not (values(32) == 'D' and values(28) != 'D'):
                 turn('D')
-        turn('F')
-        sexy('L','D')
-        turn("F'")
+        algorithm("F L D L' D' F'")
+
 
 def orientEdges() -> None:
     """
@@ -763,11 +727,22 @@ Final
     if ('F' in opposites and 'B' in opposites) or('L' in opposites and 'R' in opposites):
         algorithm("L D L' D L D2 L'")
 
+    # adjEdges = values([43, 52])
+    # while not(adjEdges == ['F', 'L'] or adjEdges == ['L', 'B'] or adjEdges == ['B','R'] or adjEdges == ['R','F']):
+    #     turn('D')
+    #     adjEdges = values([43, 52])
+
+
     adjEdges = values([43, 52])
     while not(adjEdges == ['F', 'L'] or adjEdges == ['L', 'B'] or adjEdges == ['B','R'] or adjEdges == ['R','F']):
         turn('D')
         adjEdges = values([43, 52])
-        
+
+
+    global OrientEdgesOrientationColors
+    OrientEdgesOrientationColors = values([43, 40])
+
+    
 
     algorithm("L D L' D L D2 L'")
     while(not(values(25) == 'F')):
@@ -787,8 +762,6 @@ Final
 `cubeState` position
     All yellow corners are in the correct spot (not necessarilly solved)
         """
-    print(format(solution))
-    displayCube()
     while not all([correctSpot(piece) for piece in triangulate(corners, faces['D'])]):
         Dturns = 0
         if correctSpot(26):
@@ -829,13 +802,17 @@ Final
 
         turn('D')
 
+
+
             
 
-
-
-def reduceSolution(sol: str) -> str:#Set up this function so that the computer can be given a non-spaced string of moves and turn it into nice looking notation
+def reduceSolution(sol: str) -> str:
     """
     Removes any unnecessary moves from solution
+    
+    All adjacent 'X' moves will be consolidated into one "x", "X'", or "X2"
+    
+    All adjacent equal S(A, B) will be consolidated into an S(A, B) xN
 
     Args
     -------
@@ -848,53 +825,434 @@ def reduceSolution(sol: str) -> str:#Set up this function so that the computer c
         The clean and concise solution
     """
 
-    #UUU -> U', UU -> U2, U2U -> U', U2L -> U2 L, U'L2 -> U' L2, etc
-    sol = sol.split(' ')[0:-1]
+    sol = sol.split('\n')
+    sol = [sol[i].split(' ') for i in range(len(sol))]
+    for i in range(len(sol)):
+        sol[i] = [x for x in sol[i] if x != '']
+
+    for step in sol:
+        i = 0
+        while i <len(step)-1:
+            if '(' in step[i] and ')' not in step[i]:
+                while ')' not in step[i+1]:
+                    step[i] = step[i] + ' ' + step[i+1]
+                    step.pop(i+1)
+                step[i] = step[i] + ' ' + step[i+1]
+                step.pop(i+1)
+            i+=1
+
+
+    for stepNum, step in enumerate(sol):
+
+        i = 0
+        while i < len(step)-1:
+            if 'S' in step[i]: #Joins all adjacent equal sexy algs into a S(A, B)xC format
+                if step[i][0:step[i].index(')')+1] == step[i+1]:
+                    if 'x' in step[i]:
+                        step[i] = step[i][0:step[i].index(')')+1] + 'x' + str(int(step[i][-1])+1)
+                    else:
+                        step[i] = step[i] + "x2"
+
+                    step.pop(i+1)
+                    i-=1
+            elif '(' not in step[i]: #These steps are algorithms and should be preserved
+                #Joins all adjacent R turns into one R turn
+                if step[i][0] == step[i+1][0]:
+                    numRepetitions = 1 + 1*("2" in step[i]) +2*("'" in step[i])
+                    numRepetitions += 1 +1*("2" in step[i+1]) + 2*("'" in step[i+1])
+                    numRepetitions %= 4
+
+                    if numRepetitions == 0:
+                        step.pop(i)
+                        step.pop(i)
+                        i-=1
+                    elif numRepetitions == 1:
+                        step.pop(i+1)
+                        step[i] = step[i][0]
+                        i-=1
+                    elif numRepetitions == 2:
+                        step.pop(i+1)
+                        step[i] = step[i][0] + "2"
+                        i-=1
+                    elif numRepetitions == 3:
+                        step.pop(i+1)
+                        step[i] = step[i][0] + "'"
+
+            i+=1
+
+    sol= "\n".join(' '.join(step) for step in sol)
+                    
+    return sol
+
+def translateMove(move: str, front: str, top: str) -> str:
+    """
+    translates `move` so it performs the same turn but with a different `front` and `top` color
+
+    Args
+    --------
+    move: str
+        the move to translate
+    front: str
+        The NEW front color ('R', 'F', 'R', 'B')
+    top:
+        The NEW top color('U', 'D')
+
+    Output
+    ----------
+    The translated move
+    """
+    match top:
+        case 'U': 
+            match front:
+                case 'F':
+                    return move
+                case 'L':
+                    if 'R' in move:
+                        return 'B' + move[1:]
+                    elif 'L' in move:
+                        return 'F' + move[1:]
+                    elif 'F' in move:
+                        return 'R' + move[1:]
+                    elif 'B' in move:
+                        return 'L' + move[1:]
+                case 'R':
+                    if 'R' in move:
+                        return 'F' + move[1:]
+                    elif 'L' in move:
+                        return 'B' + move[1:]
+                    elif 'F' in move:
+                        return 'L' + move[1:]
+                    elif 'B' in move:
+                        return 'R' + move[1:] 
+                case 'B':
+                    if 'R' in move:
+                        return 'L' + move[1:]
+                    elif 'L' in move:
+                        return 'R' + move[1:]
+                    elif 'F' in move:
+                        return 'B' + move[1:]
+                    elif 'B' in move:
+                        return 'F' + move[1:]                    
+                    
+        case 'D':
+            if 'U' in move:
+                return 'D' + move[1:]
+            elif 'D' in move:
+                return 'U' + move[1:]
+            
+            match front:
+                case 'F':
+                    if 'R' in move:
+                        return 'L' + move[1:]
+                    elif 'L' in move:
+                        return 'R' + move[1:]
+                case 'L':
+                    if 'R' in move:
+                        return 'B' + move[1:]
+                    elif 'L' in move:
+                        return 'F' + move[1:]
+                    elif 'F' in move:
+                        return 'L' + move[1:]
+                    elif 'B' in move:
+                        return 'R' + move[1:]
+                case 'R':
+                    if 'R' in move:
+                        return 'F' + move[1:]
+                    elif 'L' in move:
+                        return 'B' + move[1:]
+                    elif 'F' in move:
+                        return 'R' + move[1:]
+                    elif 'B' in move:
+                        return 'L' + move[1:] 
+                case 'B':
+                    if 'F' in move:
+                        return 'B' + move[1:]
+                    elif 'B' in move:
+                        return 'F' + move[1:]   
+
+    return move
+
+def FrontTopRotation(rotation: str, front: str, top: str) -> tuple[str, str]:
+    """
+    recalculates the side currently in the front and top positions of the cube
+
+    Args
+    --------
+    rotation: str
+        The notation of the rotation. Only supports x and y
+    front: str
+        The current side facing the front
+    top: str
+        The current side facing the top. Only supports 'U' and 'D'
+
+    Outputs
+    ---------
+    tuple[str, str]
+        The new front and top values
+    """
+
+    yOrder = ['F', 'L', 'B', 'R']
+    xOrderFront = ['F', 'U', 'B', 'D']
+    xOrderLeft = ['L','U', 'R', 'D']
+
+    numRots = 1 + 1*('2' in rotation) + 2*("'" in rotation)
+    if 'y' in rotation:
+        if top == 'D':
+            yOrder = yOrder[::-1]
+        front = yOrder[(yOrder.index(front) + numRots)%4]
+    else:
+        if front in xOrderFront and top in xOrderFront:
+            front = xOrderFront[(xOrderFront.index(front) + numRots)%4]
+            top = xOrderFront[(xOrderFront.index(top) + numRots)%4]
+        else:
+            front = xOrderLeft[(xOrderLeft.index(front) + numRots)%4]
+            top = xOrderLeft[(xOrderLeft.index(top) + numRots)%4]
+
+    return front, top
+ 
+def format(sol: str) -> str:
+    """
+    formats the solution so the way a person would actually solve it
+
+    is the way the `solve()` function returns it
+
+    Args
+    -------
+    sol: str
+        The unformated solution
+    
+    Output:
+    --------
+        The newly formated string
+    """
+
+    #Note: This function is messy. 
+    #The general flow is that each line of sol(each step)
+    #Gets formatted individually
+
+    front = 'F'
+    top = 'U'
+    sol = sol.split('\n')
+
+    sol[0] = reduceSolution(sol[0])
+
+    ###The Following lines format the cross step
+    top = 'D'
+    sol[1] = reduceSolution(sol[1]).split(' ')
+    i = 0
+    while i < len(sol[1]):
+        if 'D' not in sol[1][i]:
+            numYs = 0
+            while 'F' not in translateMove(sol[1][i], front, top):
+                front, top = FrontTopRotation('y', front, top)
+                numYs += 1
+
+            if numYs >0:
+                offset = 0
+                if 'U' in sol[1][i-1]:
+                    offset = 1
+                sol[1].insert(i-offset, 'y' + "'"*(numYs == 3) + "2"*(numYs == 2))
+                i+=1
+        sol[1][i] = translateMove(sol[1][i], front, top)
+        i+=1
+        
+    sol[1] = 'z2 ' + ' '.join(sol[1])
+
+
+    ###The following steps format the first layer
+    sol[2] = reduceSolution(sol[2]).split(' ')
+    i = 0
+    while i < len(sol[2]):
+        if 'S' in sol[2][i]:
+            move = sol[2][i][2:sol[2][i].index(',')]
+
+            numYs = 0
+            if "'" in move:
+                while "L'" not in translateMove(move, front, top):
+                    numYs += 1
+                    front, top = FrontTopRotation('y', front, top)
+            else:
+                while 'R' not in translateMove(move, front, top):
+                    numYs += 1
+                    front, top = FrontTopRotation('y', front, top)                
+
+            if numYs >0:
+                offset = 0
+                if '(' not in sol[2][i-1]:
+                    offset = 1
+                sol[2].insert(i-offset, 'y' + "'"*(numYs == 3) + "2"*(numYs == 2))
+                i+=1
+
+            reps = 1
+            if "x" in sol[2][i]:
+                reps = int(sol[2][i][-1])
+
+            if "'" in move:
+                sol[2][i] = "(L' U' L U)" + ('x'+str(reps))*(reps>1)
+            else:
+                sol[2][i] = "(R U R' U')" + ('x'+str(reps))*(reps>1)
+                                 
+        else:
+            sol[2][i] = translateMove(sol[2][i], front, top)
+
+        i+=1
+
+    sol[2] = ' '.join(sol[2])
+
+
+    ###This formats the second layers
+    sol[3] = reduceSolution(sol[3]).split(' ')
+    i = 0
+    while i < len(sol[3]):
+        if 'S' in sol[3][i]:
+            move = sol[3][i][2:sol[3][i].index(',')]
+
+            numYs = 0
+            if "'" in move:
+                while "L'" not in translateMove(move, front, top):
+                    numYs += 1
+                    front, top = FrontTopRotation('y', front, top)
+            else:
+                while 'R' not in translateMove(move, front, top):
+                    numYs += 1
+                    front, top = FrontTopRotation('y', front, top)                
+
+            if numYs >0:
+                offset = 0
+                if '(' not in sol[3][i-1]:
+                    offset = 1
+                sol[3].insert(i-offset, 'y' + "'"*(numYs == 3) + "2"*(numYs == 2))
+                i+=1
+
+
+            if "'" in move:
+                sol[3][i] = "(L' U' L U)"
+            else:
+                sol[3][i] = "(R U R' U')"
+                                 
+        else:
+            sol[3][i] = translateMove(sol[3][i], front, top)
+
+        i+=1
+
+#y2 U (L',U',L,U) y (R,U,R',U') U' y2 U (R,U,R',U') y' (L',U',L,U) y (L',U',L,U) y (R,U,R',U')
+    i = 0
+    while i< len(sol[3]):
+        if '(' in sol[3][i]:
+            if sol[3][i][1] == 'L':
+                sol[3].insert(i, "U'")
+                sol[3][i-1] = reduceSolution(sol[3][i-1] + " U")
+                i += 1
+            else:
+                sol[3].insert(i, "U")
+                sol[3][i-1] = reduceSolution(sol[3][i-1] + " U'")
+                i += 1
+            
+            i += 2
+
+        i += 1 
 
     i = 0
-    while i< len(sol)-1:#Makes all consecutive moves Us into U, U2, or U'
-        if '(' not in sol[i]:
-            if ("'" in sol[i+1] or '2' in sol[i+1]) and sol[i] == sol[i+1][0]: #This makes the U' or U2 come before the U so that the following if statements work regardless of which comes first
-                temp = sol[i]
-                sol[i] = sol[i+1]
-                sol[i+1] = temp
-
-            if sol[i] == sol[i+1]: #Turns UU into U2
-                sol[i] = sol[i] + '2'
-                sol.pop(i+1)
-                i-=1
-
-            elif '2' in sol[i] and sol[i][0] == sol[i+1]: #Turns U2U into U'
-                sol[i] = sol[i][0] + "'"
-                sol.pop(i+1)
-                i-=1
-
-            elif "'" in sol[i] and sol[i][0] == sol[i+1]: #Turns U'U into __
-                sol[i] = sol[i][0]
-                sol.pop(i+1)
-                sol.pop(i)
-                i-=1
-            elif (("'" in sol[i] and '2' in sol[i+1]) or ('2' in sol[i] and "'" in sol[i+1]))and sol[i][0] == sol[i+1][0]:
-                sol[i] = sol[i][0]
-                sol.pop(i+1)
-                i-=1
-        else:
-            if sol[i+1] == sol[i][0:sol[i].index(')')+1]:
-                if 'x' in sol[i]:
-                    sol[i] = sol[i][0:-1] + str(int(sol[i][-1])+1)
-                else:
-                    sol[i] = sol[i] + 'x2'
-                sol.pop(i+1)
-                i-=1
-                                    
-                
-        i+=1
-             
+    while i <len(sol[3]):
+        if '(' in sol[3][i]:
+            sol[3][i] = '[' + sol[3][i][1:-1] + ']'
+            sol[3][i+2] = '[' + sol[3][i+2][1:-1] + ']'
+            sol[3][i] = '(' + ' '.join(sol[3][i-1:i+3]) + ')'
+            sol[3].pop(i+2)
+            sol[3].pop(i+1)
+            sol[3].pop(i-1)
             
-    return ' '.join(sol)
+        i += 1
+    sol[3] = ' '.join(sol[3])
 
-def format(sol: str) -> str:
-    return reduceSolution(sol)
+
+    ###Formats the solution of the yellowCross step
+    if len(sol[4])>0:
+        move = sol[4][sol[4].index('(')+1:sol[4].index('(')+3].strip()
+        numYs = 0
+        while translateMove(move, front, top) != 'F':
+            front, top = FrontTopRotation('y', front, top)
+            numYs += 1
+        
+        sol[4] = ('y'*(numYs !=0) + "'"*(numYs == 3) + '2'*(numYs == 2) + ' '*(numYs != 0)) + sol[4]
+
+
+        sol[4] = reduceSolution(sol[4]).split(' ')
+    
+        for i in range(len(sol[4])):
+            if 'D' in sol[4][i]:
+                sol[4][i] = translateMove(sol[4][i], front, top)
+            elif 'L' in sol[4][i]:
+                sol[4][i] = 'R' + sol[4][i][1:]
+
+        for i in range(len(sol[4])):
+            if sol[4][i] == '(F':
+                sol[4][i] = '(F ['
+            elif sol[4][i] == "F')":
+                sol[4][i] = "] F')"
+                
+
+        sol[4] = ' '.join(sol[4])
+        
+    ###Formats the solution of the orient edges step
+
+    sol[5] = [x for x in sol[5].split(' ') if x != '']
+
+    for i in range(len(sol[5])):
+        
+        if '(' in sol[5][i]:
+            sol[5][i] = '(' + translateMove(sol[5][i][1:], 'F', 'D')
+        elif ')' in sol[5][i]:
+            sol[5][i] = translateMove(sol[5][i][:-1], 'F', 'D') + ')'
+        else:
+            sol[5][i] = translateMove(sol[5][i], 'F','D')
+
+    sol[5] = ' '.join(sol[5])
+
+    sol[5] = reduceSolution(sol[5])
+    
+    ###Formats the orient corners step
+    sol[6] = reduceSolution(sol[6]).split(' ')
+
+    if len(sol[6])>1:
+        if sol[6][1] == 'D':
+            sol[6][1] = "y'"
+            front, top = FrontTopRotation("y'", front, top)
+        elif sol[6][1] == 'D2':
+            sol[6][1] = 'y2'
+            front, top = FrontTopRotation("y2", front, top)
+        elif sol[6][1] == "D'":
+            sol[6][1] = 'y'
+            front, top = FrontTopRotation("y", front, top)
+
+
+
+    
+    for i in range(len(sol[6])):
+        if '(' in sol[6][i]:
+            sol[6][i] = '(' + translateMove(sol[6][i][1:], 'F', 'D')
+            
+        elif ')' in sol[6][i]:
+            sol[6][i] = translateMove(sol[6][i][:-1], 'F', 'D') + ')'
+        else:
+            sol[6][i] = translateMove(sol[6][i], 'F','D')
+
+    sol[6] = reduceSolution(' '.join(sol[6]))
+
+    sol[7] = reduceSolution(sol[7])
+    sol[7] = 'z2 ' + sol[7]
+    numYs = 0
+    while front != 'F':
+        front, top = FrontTopRotation('y', front, top)
+        numYs += 1
+
+    sol[7] = 'y'*(numYs !=0) + "'"*(numYs == 3) + '2'*(numYs == 2) + ' '*(numYs!=0) + sol[7]
+
+
+    return '\n'.join(sol)
+
+
+            
 
 def solve(facelets: str) -> str:
     """
@@ -921,6 +1279,7 @@ def solve(facelets: str) -> str:
 
     global cubeState
     global solution
+    solution = ''
     cubeState = list(facelets)
 
 
@@ -936,7 +1295,7 @@ def solve(facelets: str) -> str:
     secondLayer()
     solution += '\n'
     
-
+    
     yellowCross()
     solution += '\n'
 
@@ -952,17 +1311,4 @@ def solve(facelets: str) -> str:
 
     return format(solution)
 
-
-#OG Test Scramble: F' U2 R B2 L' D F2 R' U B' L2 D2 F' R2 U' L B2 D' R U2
-
-# Solution: L2 F2 D L D L D F'
-# D R2 D F2 L2 D B2 
-# S(L',D') S(L,D) D' S(R',D')x5 D' S(L',D') D S(L,D) D2 S(L',D')x3 
-# D D S(R',D') S(F,D) D'2 S(L',D') S(B,D) D' S(L,D) S(F',D') D S(R,D) S(B',D') 
-# F S(L,D) S(L,D) F' 
-# L D L' D L D2 L' D' L D L' D L D2 L' D' 
-
-# D S(R,U)x4 D S(R,U)x4 D S(R,U)x4 D
-
-
-print(solve(scramble("R' B' U' R' B' D2 R D2 F U2 R2 L2 F' D2 B' R2 U2 R2 F' U' R")))
+ 
