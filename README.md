@@ -11,10 +11,11 @@ Point a webcam at a scrambled Rubik's Cube, scan its six faces, and get a step-b
 | File | What it is | How it was made |
 |---|---|---|
 | `jspSolver.py` | A complete beginner-method Rubik's Cube solver (~1,300 lines, pure Python, no dependencies) | **Written entirely by hand. No AI assistants or code-generation tools were used.** |
-| `rubiks_solver.py` | Webcam scanner, colour classifier, correction screen, solver menu and step-by-step viewer | Built with help from an AI assistant (Claude). I specified the features and behaviour, and iterated on the results. |
+| `rubiks_solver.py` | Webcam scanner, colour classifier, correction screen, solver menu and step-by-step viewer | Built with help Claude. I uploaded my attempt at creating this without AI from 2024 to use as a basis for Claude to start from. I specified the features and behaviour to add, and iterated on the results. |
 
-I wanted the core algorithmic work to be entirely my own, and to use AI where it saves time on the surrounding application code (OpenCV windows, parsing, layout). I'm happy to walk through any part of `jspSolver.py` in detail.
+I wanted the core algorithmic work to be entirely my own, and to use AI where it saves time on the surrounding optimizing application code (OpenCV windows, parsing, layout)
 
+Note: Some of the terminology in this program and README come from Rubik's Cube notation and terminology. See [this website](https://jperm.net/3x3/moves) for Rubik's Cube Notation.[jperm.net/3x3/moves](https://jperm.net/3x3/moves) Refer to [this video](https://www.youtube.com/watch?v=7Ron6MN45LY) if you want a 10 minute demo of how to solve a Rubik's Cube using the beginner method.
 ## Features
 
 - **Webcam scanning** of all six faces with a live grid overlay and a mirrored preview
@@ -40,7 +41,8 @@ Requires Python 3.10 or newer (`jspSolver.py` uses `match` statements and modern
 ```python
 import jspSolver
 
-facelets = jspSolver.scramble("R U R' U' F2 D L'")   # or a 54-character facelet string from a real cube
+facelets = jspSolver.scramble("F' U2 R B2 L' D F2 R' U B' L2 D2 F' R2 U' L B2 D' R U2")
+# or use a 54-character facelet string from a real cube
 print(jspSolver.solve(facelets))
 ```
 
