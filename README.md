@@ -127,15 +127,14 @@ z2 S(R,U)x4 D S(R,U)x4 D2 S(R,U)x4 D
 
 ```
 .
-├── rubiks_solver.py   # scanner, correction UI, solver menu, walkthrough viewer
-├── jspSolver.py       # beginner-method solver (hand-written, no dependencies)
+├── src/
+│   ├── rubiks_solver.py   # scanner, correction UI, solver menu, walkthrough viewer
+│   └── jspSolver.py       # beginner-method solver (hand-written, no dependencies)
+├── LICENSE
 └── README.md
 ```
 
 ## Known limitations
-
-- On a small fraction of scrambles (about 3 in 40 in random testing) `jspSolver` takes a very long time to finish. This needs investigating.
-- Occasionally the second-layer line of the solver's output contains malformed brackets. The viewer shows that text as an unrecognised instruction instead of crashing.
 - The beginner method is deliberately simple and long: roughly 150 to 250 turns, compared with around 20 for Kociemba. That is why the app offers both.
 - Colour detection needs reasonably even lighting. The correction screen is there for the occasional misread sticker.
 
